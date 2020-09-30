@@ -15,8 +15,13 @@ namespace ScriptColumnRemover
             Console.WriteLine("Coluna desejada:");
             var nomeColuna = Console.ReadLine();
 
+            Console.WriteLine("Valor a ser substituido (vazio para substituir todos):");
+            var valorTroca = Console.ReadLine();
+
             Console.WriteLine("Novo valor:");
             var novoValor = Console.ReadLine();
+
+            int i = 0;
 
             try
             {
@@ -36,8 +41,15 @@ namespace ScriptColumnRemover
 
                             var index1 = GetNthIndex(line, ',', int.Parse(nomeColuna) - 1) + 1;
                             var index2 = GetNthIndex(line, ',', int.Parse(nomeColuna)) - 1;
+                            var newLine = line;
 
-                            var newLine = line.Remove(index1, (index2 - index1) + 1).Insert(index1, novoValor);
+                            var valorAtual = line.Substring(index1, (index2 - index1) + 1).Trim();
+
+                            if (String.IsNullOrEmpty(valorTroca) || valorAtual.Equals(valorTroca?.Trim()))
+                            {
+                                newLine = line.Remove(index1, (index2 - index1) + 1).Insert(index1, novoValor);
+                                i++;
+                            }                                
 
                             builder.AppendLine(newLine);
                         }
@@ -52,10 +64,13 @@ namespace ScriptColumnRemover
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine("ERRO:");
+                Console.WriteLine(ex.Message);
             }
+
             Console.WriteLine("Arquivo criado com sucesso!");
-            Thread.Sleep(2000);
+            Console.WriteLine($"{i} substituições realizadas.");
+            Thread.Sleep(3000);
         }
 
         public static int GetNthIndex(string s, char t, int n)
